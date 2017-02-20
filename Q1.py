@@ -5,7 +5,7 @@ from operator import add
 from pyspark.sql.functions import *
 
 
-log_file_path = '/Users/' + os.path.join('your path')
+log_file_path = '/Users/' + os.path.join('zhongjing', 'Downloads', 'epa-http.txt')
 print "The path of the log file is: " + log_file_path
 
 #Read the log file.
@@ -43,6 +43,8 @@ reduced_q1_rdd = q1_rdd.reduceByKey(add)
 reduced_q1_df = spark.createDataFrame(reduced_q1_rdd)
 df_q1_ans = reduced_q1_df.select(col("_1").alias("host"), col("_2").alias("Total_number_of_bytes"))
 df_q1_ans.show(n=20, truncate=False)
+print 'This is the answer of question 1 \n\n\n'
+
 
 
 

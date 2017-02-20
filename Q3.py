@@ -6,7 +6,7 @@ from pyspark.sql.functions import *
 from pyspark.sql.window import Window
 
 
-log_file_path = '/Users/' + os.path.join('your path')
+log_file_path = '/Users/' + os.path.join('zhongjing', 'Downloads', 'epa-http.txt')
 print "The path of the log file is: " + log_file_path
 
 #Read the log file.
@@ -35,20 +35,28 @@ for i in range(len(bad_col)):
 
 # Replace null content_size values with 0.
 log_df = split_df.fillna({'bytes': 0})
+
+# Select the relevant columns
 q3_df = log_df.select('host', 'bytes', 'time')
 
 # Change the time format
-q3_df = q3_df.withColumn('day:hour_time', q3_df.time[0:5]).select('*')
-q3_new_df = q3_df.withColumn('day:hour_time', q3_df.time[0:5]).select('*')
+q3_df = q3_df.withColumn('day:hour', q3_df.time[0:5]).select('*')
+q3_new_df = q3_df.withColumn('day:hour', q3_df.time[0:5]).select('*')
 
 # Define the window
 windowSpec = Window\
             .partitionBy('host')\
-            .orderBy('day:hour_time')
+            .orderBy('day:hour')
 
 # Calculate the total bytes in the window
 q3_new_df.withColumn('total_bytes',\
-                     sum('bytes').over(windowSpec)).select('host', 'day:hour_time', 'total_bytes').distinct().show(n=10000, truncate=False)
+                     sum('bytes')\
+                     .over(windowSpec))\
+                     .select('host', 'day:hour', 'total_bytes')\
+                     .distinct().show(n=50, truncate=False)
+print 'This is the answer of question 3\n\n\n'
+
+
 
 
 
